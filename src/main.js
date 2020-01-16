@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require('electron')
+const path = require("path");
+const fileOps = require("./main/fileoperations.js");
 
 function createWindow () {
     // Create the browser window.
@@ -12,13 +14,22 @@ function createWindow () {
 
     // and load the index.html of the app.
     win.loadFile('./src/render/html/index.html');
-
+    
     win.on("closed", () => {
         win = null;
     });
 }
 
-app.on('ready', createWindow);
+app.on('ready', function() {
+    createWindow();
+
+    fileOps.readListsAsync()
+        .then(function(filesList) {
+            filesList.forEach(file => {
+                console.log(file);
+            });
+        });
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

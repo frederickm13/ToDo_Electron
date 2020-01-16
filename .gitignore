@@ -1,6 +1,9 @@
 # Environment config files
 .vscode/
 
+# Data files
+listdata/
+
 # Logs
 logs
 *.log
