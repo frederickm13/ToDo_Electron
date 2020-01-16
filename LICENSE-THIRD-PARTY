@@ -1,0 +1,18 @@
+This file contains any third-party licenses for components used in this repository.
+
+-----------------------------
+Component Name: Knockout.js
+Component URL: https://knockoutjs.com/
+-----------------------------
+Knockout JavaScript library v3.5.1
+(c) The Knockout.js team - http://knockoutjs.com/
+License: MIT (http://www.opensource.org/licenses/mit-license.php)
+-----------------------------
+
+-----------------------------
+Component Name: w3.css
+Component URL: https://www.w3schools.com/w3css/
+-----------------------------
+W3.CSS 4.13 June 2019 by Jan Egil and Borge Refsnes
+Extract from normalize.css by Nicolas Gallagher and Jonathan Neal git.io/normalize
+-----------------------------
