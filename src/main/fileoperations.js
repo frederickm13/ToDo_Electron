@@ -5,7 +5,7 @@ createDataDir = function createDataDir() {
     let dirPath = path.join(".", "listdata");
 
     return new Promise(function(resolve, reject) {
-        fs.mkdir(path.join(".", "listdata"), function(err) {
+        fs.mkdir(dirPath, function(err) {
             if (err) {
                 // Handle error here
                 reject(err);
