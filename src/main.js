@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require("path");
 const fileOps = require("./main/fileoperations.js");
 
@@ -22,13 +22,6 @@ function createWindow () {
 
 app.on('ready', function() {
     createWindow();
-
-    fileOps.readListsAsync()
-        .then(function(filesList) {
-            filesList.forEach(file => {
-                console.log(file);
-            });
-        });
 });
 
 app.on("window-all-closed", () => {
@@ -44,3 +37,10 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+ipcMain.on("requestListsAsync", function(event, arg) {
+    fileOps.readListsAsync()
+        .then(function(filesList) {
+            event.reply("requestListsAsyncResponse", filesList);
+        });
+})
