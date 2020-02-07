@@ -38,9 +38,9 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.on("requestListsAsync", function(event, arg) {
-    fileOps.readListsAsync()
+ipcMain.on("requestJsonFileDataAsync", function(event, fileName) {
+    fileOps.readJsonAsync("listdata", fileName)
         .then(function(filesList) {
-            event.reply("requestListsAsyncResponse", filesList);
+            event.reply("requestJsonFileDataAsyncResponse", filesList);
         });
-})
+});

@@ -1,15 +1,15 @@
 var fs = require("fs");
 var path = require("path");
 
-function createDataDir() {
-    let dirPath = path.join(".", "listdata");
+function createDataDir(dirName, fileName) {
+    let dirPath = path.join(".", dirName);
 
     return new Promise(function(resolve, reject) {
         fs.mkdir(dirPath, function(err) {
             if (err) {
                 // Handle error here
                 if (err.code === "EEXIST") {
-                    createListsFile()
+                    createJsonFile(dirName, fileName)
                         .then(function(result) {
                             if (result === true) {
                                 resolve(result);
@@ -28,11 +28,11 @@ function createDataDir() {
     });
 }
 
-function createListsFile() {
-    let dirPath = path.join(".", "listdata");
+function createJsonFile(dirName, fileName) {
+    let dirPath = path.join(".", dirName);
 
     return new Promise(function(resolve, reject) {
-        fs.writeFile(path.join(dirPath, "lists.json"), "[]", function(err) {
+        fs.writeFile(path.join(dirPath, fileName + ".json"), "[]", function(err) {
             if (err) {
                 reject(err);
             } else {
@@ -42,15 +42,15 @@ function createListsFile() {
     })
 }
 
-exports.readListsAsync = function readListsAsync() {
-    let dirPath = path.join(".", "listdata", "lists.json");
+exports.readJsonAsync = function readJsonAsync(dirName, fileName) {
+    let dirPath = path.join(".", dirName, fileName + ".json");
 
     return new Promise(function(resolve, reject) {
         fs.readFile(dirPath, function (err, data) {
             if (err) {
                 // Add error logic here
                 if (err.code === "ENOENT") {
-                    createDataDir()
+                    createDataDir(dirName, fileName)
                         .then(function(result) {
                             if (result === true) {
                                 resolve([]);
