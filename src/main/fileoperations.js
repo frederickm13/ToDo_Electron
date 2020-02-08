@@ -1,38 +1,31 @@
 var fs = require("fs");
 var path = require("path");
 
-function createDataDir(dirName, fileName) {
-    let dirPath = path.join(".", dirName);
+exports.ReadJsonFileAsync = function ReadJsonFileAsync(filePath) {
+    let fullPath = ".";
+    filePath.forEach(function(element) {
+        fullPath = path.join(fullPath, element);
+    });
 
     return new Promise(function(resolve, reject) {
-        fs.mkdir(dirPath, function(err) {
+        fs.readFile(fullPath + ".json", function (err, data) {
             if (err) {
-                // Handle error here
-                if (err.code === "EEXIST") {
-                    createJsonFile(dirName, fileName)
-                        .then(function(result) {
-                            if (result === true) {
-                                resolve(result);
-                            }
-                        }, function(err) {
-                            // Handle error here
-                            reject(err.message);
-                        });
-                } else {
-                    reject(err);
-                }
+                reject(err);
             } else {
-                resolve(true);
+                resolve(JSON.parse(data));
             }
         });
     });
 }
 
-function createJsonFile(dirName, fileName) {
-    let dirPath = path.join(".", dirName);
+exports.WriteJsonFileAsync = function WriteJsonFileAsync(filePath, content) {
+    let fullPath = ".";
+    filePath.forEach(function(element) {
+        fullPath = path.join(fullPath, element);
+    });
 
     return new Promise(function(resolve, reject) {
-        fs.writeFile(path.join(dirPath, fileName + ".json"), "[]", function(err) {
+        fs.writeFile(fullPath + ".json", content, function(err) {
             if (err) {
                 reject(err);
             } else {
@@ -42,28 +35,15 @@ function createJsonFile(dirName, fileName) {
     })
 }
 
-exports.readJsonAsync = function readJsonAsync(dirName, fileName) {
-    let dirPath = path.join(".", dirName, fileName + ".json");
+exports.CreateDirAsync = function CreateDirAsync(dirName) {
+    let dirPath = path.join(".", dirName);
 
     return new Promise(function(resolve, reject) {
-        fs.readFile(dirPath, function (err, data) {
+        fs.mkdir(dirPath, function(err) {
             if (err) {
-                // Add error logic here
-                if (err.code === "ENOENT") {
-                    createDataDir(dirName, fileName)
-                        .then(function(result) {
-                            if (result === true) {
-                                resolve([]);
-                            }
-                        }, function(err) {
-                            // Handle error here
-                            reject(err.message);
-                        });
-                } else {
-                    reject("An error occurred: " + err.message);
-                }
+                reject(err);
             } else {
-                resolve(JSON.parse(data));
+                resolve(true);
             }
         });
     });

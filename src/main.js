@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require("path");
 const fileOps = require("./main/fileoperations.js");
 
 function createWindow () {
@@ -38,9 +37,31 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.on("requestJsonFileDataAsync", function(event, fileName) {
-    fileOps.readJsonAsync("listdata", fileName)
-        .then(function(filesList) {
-            event.reply("requestJsonFileDataAsyncResponse", filesList);
+ipcMain.on("ReadJsonFileAsync", function(event, filePath) {
+    filePath = ["_data", filePath];
+    fileOps.ReadJsonFileAsync(filePath)
+        .then(function(successResponse) {
+            event.reply("ReadJsonFileAsyncResponse", [true, successResponse]);
+        }, function(errResponse) {
+            event.reply("ReadJsonFileAsyncResponse", [false, errResponse]);
+        });
+});
+
+ipcMain.on("WriteJsonFileAsync", function(event, filePath, content) {
+    filePath = ["_data", filePath];
+    fileOps.WriteJsonFileAsync(filePath, content)
+        .then(function(successResponse) {
+            event.reply("WriteJsonFileAsyncResponse", [true, null]);
+        }, function(errResponse) {
+            event.reply("WriteJsonFileAsyncResponse", [false, errResponse]);
+        });
+});
+
+ipcMain.on("CreateDirAsync", function(event, dirPath) {
+    fileOps.CreateDirAsync(dirPath)
+        .then(function(successResponse) {
+            event.reply("CreateDirAsyncResponse", [true, null]);
+        }, function(errResponse) {
+            event.reply("CreateDirAsyncResponse", [false, errResponse]);
         });
 });

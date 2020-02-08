@@ -1,22 +1,19 @@
-const { ipcRenderer } = require("electron");
-
-
 //////////////////////////
 // View Model definition
 //////////////////////////
 function toDoItem(title, createdDate, lastModified, content) {
     var self = this;
 
-    self.itemTitle = title;
-    self.itemCreatedDate = createdDate;
-    self.itemLastModified = lastModified;
+    self.itemTitle = ko.observable(title);
+    self.itemCreatedOn = createdDate;
+    self.itemLastModifiedOn = lastModified;
     self.itemContent = content;
 }
 
 function toDoList(id, title, createdOn, modifiedOn) {
     var self = this;
 
-    self.id = id;
+    self.listId = id;
     self.listTitle = title;
     self.listCreatedOn = createdOn;
     self.listModifiedOn = modifiedOn;
@@ -38,59 +35,66 @@ var appViewModel = new viewModel();
 /////////////////////////
 // Functions Definition
 /////////////////////////
-function requestJsonFileDataAsync(fileName) {    
-    return new Promise(function(resolve, reject) {
-        ipcRenderer.send("requestJsonFileDataAsync", fileName);
-
-        ipcRenderer.on("requestJsonFileDataAsyncResponse", function(event, args) {
-            resolve(args);
-        });
-    });
-}
-
-function requestHomeData() {
+function RequestHomeData() {
     let fileName = "lists";
-    requestJsonFileDataAsync(fileName).then(
-        function(data) {
+    JsonService.ReadJsonFileAsync(fileName)
+        .then(function(data) {
             data.forEach(function(element) {
-                let list = new toDoList(element.Id, element.Title, element.CreatedOn, element.ModifiedOn);
+                let list = new toDoList(element.listId, element.listTitle, element.listCreatedOn, element.listModifiedOn);
                 appViewModel.itemLists.push(list);
             });
-        }
-    );
+        });
 }
 
-function requestListData(list) {
+function RequestListData(list) {
     appViewModel.activeList(list);
-    requestJsonFileDataAsync(list.id).then(
-        function(data) {
+    JsonService.ReadJsonFileAsync(list.listId.toString())
+        .then(function(data) {
             data.forEach(function(element) {
-                let item = new toDoItem(element.title, element.createdon, element.modifiedon, element.content);
+                let item = new toDoItem(element.itemTitle, element.itemCreatedOn, element.itemLastModifiedOn, element.itemContent);
                 appViewModel.activeList().listItems.push(item);
             });
-        }
-    );
+        });
 
     appViewModel.home(false);
 }
 
-function showListItem(listItem) {
+function ShowListItem(listItem) {
     appViewModel.activeItem(listItem);
 }
 
-function navigateHome() {
+function NavigateHome() {
     appViewModel.activeItem(null);
     appViewModel.activeList(null);
+    appViewModel.itemLists([]);
+    RequestHomeData();
     appViewModel.home(true);
 }
 
-function saveAll() {
+function SaveAll() {
     let saveIcon = document.getElementById("SaveIcon");
     saveIcon.classList.add("w3-spin");
 
     // Add logic here to save
+    let activeList = ko.toJSON(appViewModel.activeList().listItems);
+    JsonService.WriteJsonFileAsync(appViewModel.activeList().listId.toString(), activeList)
+        .then(function(successResponse) {
+            console.log("Save executed successfully");
+            saveIcon.classList.remove("w3-spin");
+        }, function(errorResponse) {
+            console.log("Save failed");
+            saveIcon.classList.remove("w3-spin");
+        });
+}
 
-    saveIcon.classList.remove("w3-spin");
+function CreateNewList() {
+
+}
+
+function CreateNewListItem() {
+    let newItem = new toDoItem("", new Date(), new Date(), "");
+    appViewModel.activeList().listItems.push(newItem);
+    appViewModel.activeItem(newItem);
 }
 
 
@@ -100,5 +104,5 @@ function saveAll() {
 ko.applyBindings(appViewModel);
 
 window.addEventListener("DOMContentLoaded", function(event) {
-    requestHomeData();
+    RequestHomeData();
 })
