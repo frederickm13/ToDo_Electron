@@ -1,3 +1,6 @@
+const $ = require("jquery");
+
+
 //////////////////////////
 // View Model definition
 //////////////////////////
@@ -72,23 +75,24 @@ function NavigateHome() {
 }
 
 function SaveAll() {
-    let saveIcon = document.getElementById("SaveIcon");
-    saveIcon.classList.add("w3-spin");
+    $("#SaveIcon").addClass("w3-spin");
 
     // Add logic here to save
     let activeList = ko.toJSON(appViewModel.activeList().listItems);
     JsonService.WriteJsonFileAsync(appViewModel.activeList().listId.toString(), activeList)
         .then(function(successResponse) {
             console.log("Save executed successfully");
-            saveIcon.classList.remove("w3-spin");
+            $("#SaveIcon").removeClass("w3-spin");
         }, function(errorResponse) {
             console.log("Save failed");
-            saveIcon.classList.remove("w3-spin");
+            $("#SaveIcon").removeClass("w3-spin");
         });
 }
 
 function CreateNewList() {
-
+    let currentDateTime = new Date();
+    let newItem = new toDoList(currentDateTime.getTime(), "Test", currentDateTime, currentDateTime);
+    appViewModel.itemLists.push(newItem);
 }
 
 function CreateNewListItem() {
@@ -103,6 +107,6 @@ function CreateNewListItem() {
 /////////////////////
 ko.applyBindings(appViewModel);
 
-window.addEventListener("DOMContentLoaded", function(event) {
+$(document).ready(function(event) {
     RequestHomeData();
 })
