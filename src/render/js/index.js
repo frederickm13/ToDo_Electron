@@ -67,6 +67,8 @@ function ShowListItem(listItem) {
 }
 
 function NavigateHome() {
+    // Add functionality to save when prompted
+    SaveAll();
     appViewModel.activeItem(null);
     appViewModel.activeList(null);
     appViewModel.itemLists([]);
@@ -82,10 +84,10 @@ function SaveAll() {
     JsonService.WriteJsonFileAsync(appViewModel.activeList().listId.toString(), activeList)
         .then(function(successResponse) {
             console.log("Save executed successfully");
-            $("#SaveIcon").removeClass("w3-spin");
+            setTimeout(function () { $("#SaveIcon").removeClass("w3-spin"); }, 1000);
         }, function(errorResponse) {
             console.log("Save failed");
-            $("#SaveIcon").removeClass("w3-spin");
+            setTimeout(function () { $("#SaveIcon").removeClass("w3-spin"); }, 1000);
         });
 }
 

@@ -12,7 +12,13 @@ exports.ReadJsonFileAsync = function ReadJsonFileAsync(filePath) {
             if (err) {
                 reject(err);
             } else {
-                resolve(JSON.parse(data));
+                let result = "";
+                
+                if (data.length > 0) {
+                    result = JSON.parse(data);
+                }
+
+                resolve(result);
             }
         });
     });
