@@ -9,7 +9,7 @@ var JsonService = function jsonService() {
 
             ipcRenderer.on("ReadJsonFileAsyncResponse", function(event, response) {
                 // Check if error occurred
-                if (response[0] = false) {
+                if (response[0] === false) {
                     reject(response[1]);
                 } else {
                     resolve(response[1]);
@@ -24,7 +24,22 @@ var JsonService = function jsonService() {
 
             ipcRenderer.on("WriteJsonFileAsyncResponse", function(event, response) {
                 // Check if error occurred
-                if (response[0] = false) {
+                if (response[0] === false) {
+                    reject(response[1]);
+                } else {
+                    resolve(response[0]);
+                }
+            });
+        });
+    }
+
+    self.DeleteJsonFileAsync = function DeleteJsonFileAsync(fileName) {
+        return new Promise(function(resolve, reject) {
+            ipcRenderer.send("DeleteJsonFileAsync", fileName);
+
+            ipcRenderer.on("DeleteJsonFileAsyncResponse", function(event, response) {
+                // Check if error occurred
+                if (response[0] === false) {
                     reject(response[1]);
                 } else {
                     resolve(response[0]);
@@ -35,6 +50,7 @@ var JsonService = function jsonService() {
 
     return {
         ReadJsonFileAsync: self.ReadJsonFileAsync,
-        WriteJsonFileAsync: self.WriteJsonFileAsync
+        WriteJsonFileAsync: self.WriteJsonFileAsync,
+        DeleteJsonFileAsync: DeleteJsonFileAsync
     }
 }();

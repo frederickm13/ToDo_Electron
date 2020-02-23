@@ -11,11 +11,14 @@
     <body style="min-height: 100vh; min-width: 100vw;">
         <div style="display: table; height: 100vh; width: 100vw">
             <div class="w3-bar w3-black" style="display: table-row">
-                <div data-bind="click: NavigateHome" class="w3-bar-item w3-button w3-border-right w3-border-grey">
+                <div data-bind="click: NavigateHome, hidden: home" class="w3-bar-item w3-button w3-border-right w3-border-grey">
                     <i class="fas fa-home"></i>
                 </div>
-                <div data-bind="click: SaveAll, hidden: home" class="w3-bar-item w3-button w3-border-left w3-border-grey w3-right">
-                    <i id="SaveIcon" class="fas fa-save"></i>
+                <div data-bind="click: SaveHomeLists, visible: home" class="w3-bar-item w3-button w3-border-left w3-border-grey w3-right">
+                    <i id="HomeSaveIcon" class="fas fa-save"></i>
+                </div>
+                <div data-bind="click: SaveActiveList, hidden: home" class="w3-bar-item w3-button w3-border-left w3-border-grey w3-right">
+                    <i id="ListSaveIcon" class="fas fa-save"></i>
                 </div>
             </div>            
             <div style="display: table-row; height: 100%;">
@@ -24,8 +27,22 @@
                         <!--Home Page-->
                         <div class="w3-card w3-light-grey" style="height: 100%; overflow: auto;" data-bind="visible: home">
                             <div data-bind="foreach: itemLists" class="w3-padding">
-                                <div class="w3-card w3-white w3-padding w3-section w3-block w3-button" data-bind="click: RequestListData">
-                                    <h4 data-bind="text: listTitle"></h4>
+                                <div class="w3-cell-row w3-card w3-white w3-section">
+                                    <div class="w3-container w3-padding w3-cell w3-button" style="width: 80%;" data-bind="click: RequestListData, hidden: editListItem">
+                                        <h4 data-bind="text: listTitle"></h4>
+                                    </div>
+                                    <div class="w3-container w3-padding w3-cell" style="width: 80%;" data-bind="visible: editListItem">
+                                        <input type="text" data-bind="value: listTitle" style="width: 100%;">
+                                    </div>
+                                    <div data-bind="click: EditItem, hidden: editListItem" class="w3-container w3-padding w3-cell w3-cell-middle w3-button" style="width: 10%;">
+                                        <i id="EditIcon" class="fas fa-edit"></i>
+                                    </div>
+                                    <div data-bind="click: SaveItem, visible: editListItem" class="w3-container w3-padding w3-cell w3-cell-middle w3-button" style="width: 10%;">
+                                        <i id="SaveItemIcon" class="fas fa-save"></i>
+                                    </div>
+                                    <div data-bind="click: DeleteItem" class="w3-container w3-padding w3-cell w3-cell-middle w3-button" style="width: 10%;">
+                                        <i id="DeleteIcon" class="fas fa-trash"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>

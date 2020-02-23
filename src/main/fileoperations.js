@@ -38,16 +38,54 @@ exports.WriteJsonFileAsync = function WriteJsonFileAsync(filePath, content) {
                 resolve(true);
             }
         });
+    });
+}
+
+exports.CreateDirAsync = function CreateDirAsync(dirPath) {
+    let fullPath = ".";
+    dirPath.forEach(function(element) {
+        fullPath = path.join(fullPath, element);
+    });
+
+    return new Promise(function(resolve, reject) {
+        fs.mkdir(fullPath, function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
+
+exports.DeleteJsonFileAsync = function DeleteJsonFileAsync(filePath) {
+    let fullPath = ".";
+    filePath.forEach(function(element) {
+        fullPath = path.join(fullPath, element);
+    });
+
+    return new Promise(function(resolve, reject) {
+        fs.unlink(fullPath + ".json", function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(true);
+            }
+        });
     })
 }
 
-exports.CreateDirAsync = function CreateDirAsync(dirName) {
-    let dirPath = path.join(".", dirName);
+exports.CheckFileOrDirExists = function CheckFileOrDirExists(filePath) {
+    let fullPath = ".";
+    filePath.forEach(function(element) {
+        fullPath = path.join(fullPath, element);
+    });
 
-    return new Promise(function(resolve, reject) {
-        fs.mkdir(dirPath, function(err) {
-            if (err) {
-                reject(err);
+    return new Promise(function (resolve, reject) {
+        fs.access(fullPath, fs.constants.F_OK, function (error) {
+            if (error) {
+                console.log(error);
+                reject(error);
             } else {
                 resolve(true);
             }
